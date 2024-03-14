@@ -1,3 +1,4 @@
+ModAPI.require("player");
 let sprintToggled = false;
 function toggleSprint(enable) {
     sprintToggled = enable;
