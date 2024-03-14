@@ -1,21 +1,35 @@
 ModAPI.require("player");
 let sprintToggled = false;
-function toggleSprint(enable) {
-    sprintToggled = enable;
-    ModAPI.player.serverSprintState = sprintToggled;
-    ModAPI.player.reload();
-    ModAPI.displayToChat({ msg: sprintToggled ? "Sprint Toggled ON" : "Sprint Toggled OFF" });
-}
-ModAPI.addEventListener("sendchatmessage", event => {
-    const message = event.message.toLowerCase().trim();
-    if (message === ".togglesprint on") {
-        toggleSprint(true);
-        event.preventDefault = true;
-    } else if (message === ".togglesprint off") {
-        toggleSprint(false);
-        event.preventDefault = true;
-    } else if (message === ".togglesprint") {
-        ModAPI.displayToChat({ msg: "Usage: .togglesprint on or .togglesprint off" });
-        event.preventDefault = true;
+function updateSprintState() {
+    if (sprintToggled) {
+        ModAPI.player.serverSprintState = true;
+    } else {
+        ModAPI.player.serverSprintState = false;
     }
+}
+function toggleSprintOn() {
+    sprintToggled = true;
+    updateSprintState();
+    ModAPI.displayToChat({ msg: "ToggleSprint activated." });
+}
+function toggleSprintOff() {
+    sprintToggled = false;
+    updateSprintState();
+    ModAPI.displayToChat({ msg: "ToggleSprint deactivated." });
+}
+ModAPI.addEventListener("sendchatmessage", (ev) => {
+    const message = ev.message.toLowerCase().trim();
+    if (message === ".togglesprint on") {
+        ev.preventDefault = true;
+        toggleSprintOn();
+    } else if (message === ".togglesprint off") {
+        ev.preventDefault = true;
+        toggleSprintOff();
+    } else if (message === ".togglesprint") {
+        ev.preventDefault = true;
+        ModAPI.displayToChat({ msg: "Incorrect Usage: Use .togglesprint on or .togglesprint off" });
+    }
+});
+ModAPI.addEventListener("update", () => {
+    updateSprintState();
 });
